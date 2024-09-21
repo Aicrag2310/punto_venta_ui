@@ -1,24 +1,47 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import { TokenUtils } from '@/utils/TokenUtils';
+import '@/plugins/currency';
+import '@/plugins/currency-field';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
+    name: 'root',
+    component: () => {
+      if (!TokenUtils.hasToken()) {
+        return import('../views/Login.vue');
+      }
+
+      return null;
+    },
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component() {
-      return import(/* webpackChunkName: "about" */ '../views/AboutView.vue');
-    },
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/Login.vue'),
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/Dashboard.vue'),
+  },
+  {
+    path: '/new-product',
+    name: 'new-product',
+    component: () => import('../views/CreateProduct.vue'),
+  },
+  {
+    path: '/inventory',
+    name: 'inventory',
+    component: () => import('../views/inventoryView.vue'),
+  },
+  {
+    path: '/store',
+    name: 'ventas',
+    component: () => import('../views/ventasView.vue'),
   },
 ];
 
