@@ -28,7 +28,7 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Descargar plantilla s</span>
+            <span>Descargar plantilla</span>
           </v-tooltip>
 
           <v-tooltip top>
