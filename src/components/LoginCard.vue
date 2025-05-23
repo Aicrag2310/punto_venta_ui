@@ -89,6 +89,7 @@ export default {
           });
           return;
         }
+        console.log('Hola a todos jeje');
         TokenUtils.setToken(resp.token);
         // eslint-disable-next-line
         const payload = TokenUtils.getJwtData();
