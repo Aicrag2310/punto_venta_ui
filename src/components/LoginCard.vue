@@ -13,7 +13,7 @@
             <v-toolbar color="primary" dark flat>
               <v-toolbar-title>
                 <v-icon>mdi-login</v-icon>
-                Login
+                Login alex
               </v-toolbar-title>
               <v-spacer />
             </v-toolbar>
@@ -44,8 +44,11 @@
 </template>
 
 <script>
+/* eslint-disable */ 
 import { TokenUtils } from '@/utils/TokenUtils';
 import * as AppUtils from '@/utils/AppUtils';
+import Swal from 'sweetalert2';
+import AuthService from '@/services/AuthService';
 
 export default {
   name: 'LoginCard',
@@ -57,11 +60,48 @@ export default {
   },
   methods: {
     async authUser() {
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyNDZjMzQ5NC1mM2I0LTRjYjktYjY0OC1kNWJiNzUyODg1ZjYiLCJpZGVudGl0eSI6MSwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIiwicm9sZXMiOlsiQWRtaW5pc3RyYWRvciJdfQ.4siTeZw5IdFLqAZvMPOk360jRASdDgrS1WoY8k3fWOU';
-      TokenUtils.setToken(token);
-      // eslint-disable-next-line
-      const payload = TokenUtils.getJwtData();
-      AppUtils.redirectToUserSectionByAttributes(this.$router);
+      if (!this.username) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Favor de ingresar su usuario',
+        });
+        return;
+      }
+      if (!this.password) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Favor de ingresar su contraseña',
+        });
+        return;
+      }
+      try {
+        const resp = await AuthService.auth(
+          this.username,
+          this.password,
+        );
+        if (resp.error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: resp.error,
+          });
+          return;
+        }
+        TokenUtils.setToken(resp.token);
+        // eslint-disable-next-line
+        const payload = TokenUtils.getJwtData();
+        const { identity: userId } = TokenUtils.getJwtData();
+        AppUtils.redirectToUserSectionByAttributes(this.$router);
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.response.data.message,
+        });
+      }
     },
   },
 };
